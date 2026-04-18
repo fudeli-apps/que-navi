@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FOODIX 実行計画書</title>
+<style>
+* { box-sizing: border-box; }
+body { margin:0; padding:32px 20px; font-family:-apple-system,"Noto Sans JP",sans-serif; background:#f5f5f7; color:#1d1d1f; -webkit-font-smoothing:antialiased; line-height:1.6; }
+.wrap { max-width:900px; margin:0 auto; }
+h1 { font-size:32px; font-weight:800; margin:0 0 4px; letter-spacing:-.02em; }
+.sub { color:#6e6e73; margin-bottom:40px; font-size:15px; }
+h2 { font-size:22px; font-weight:800; margin:56px 0 16px; padding-bottom:8px; border-bottom:2px solid #1d1d1f; }
+h3 { font-size:17px; font-weight:700; margin:28px 0 12px; }
+.card { background:#fff; border-radius:14px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,.06); margin-bottom:14px; }
+.card.emph { background:#fff8e1; border:1px solid #ffd54f; }
+.card.ok { background:#e8f5e9; border:1px solid #a5d6a7; }
+.card.plan { background:#e3f2fd; border:1px solid #90caf9; }
+.tag { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; letter-spacing:.05em; margin-right:6px; }
+.tag.must { background:#fee; color:#b42318; }
+.tag.should { background:#fff3e0; color:#e65100; }
+.tag.nice { background:#f0f4ff; color:#3b5998; }
+.tag.done { background:#e6f5eb; color:#067647; }
+.grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:14px; }
+@media(max-width:700px){ .grid { grid-template-columns:1fr; } }
+.name-opt { padding:14px; border:2px solid #e5e5e7; border-radius:10px; background:#fff; }
+.name-opt h4 { margin:0 0 6px; font-size:18px; font-weight:800; }
+.name-opt p { margin:0; color:#6e6e73; font-size:13px; }
+table { width:100%; border-collapse:collapse; margin:14px 0; background:#fff; border-radius:10px; overflow:hidden; }
+th, td { padding:10px 12px; text-align:left; font-size:13px; border-bottom:1px solid #f0f0f0; }
+th { background:#1d1d1f; color:#fff; font-size:12px; font-weight:700; }
+tr:last-child td { border-bottom:none; }
+.matrix { position:relative; height:360px; background:#fff; border:2px solid #e5e5e7; border-radius:12px; margin:14px 0; padding:20px; }
+.matrix .axis-x { position:absolute; bottom:-24px; left:50%; transform:translateX(-50%); font-size:12px; color:#6e6e73; font-weight:700; }
+.matrix .axis-y { position:absolute; top:50%; left:-70px; transform:rotate(-90deg) translateX(-50%); font-size:12px; color:#6e6e73; font-weight:700; }
+.matrix .grid-line-v { position:absolute; top:20px; bottom:20px; left:50%; border-left:1px dashed #d1d1d6; }
+.matrix .grid-line-h { position:absolute; left:20px; right:20px; top:50%; border-top:1px dashed #d1d1d6; }
+.matrix .item { position:absolute; padding:4px 8px; background:#1d1d1f; color:#fff; font-size:10px; font-weight:700; border-radius:6px; white-space:nowrap; }
+.matrix .item.priority1 { background:#dc2626; }
+.matrix .item.priority2 { background:#ea580c; }
+.matrix .item.priority3 { background:#2563eb; }
+.matrix .item.priority4 { background:#6b7280; }
+.matrix .quad-label { position:absolute; font-size:11px; color:#c1c1c3; font-weight:600; }
+.timeline { padding:16px 0; }
+.timeline-item { display:flex; gap:16px; padding:12px 0; border-left:2px solid #1d1d1f; padding-left:16px; margin-left:8px; position:relative; }
+.timeline-item::before { content:""; position:absolute; left:-7px; top:18px; width:12px; height:12px; border-radius:50%; background:#1d1d1f; }
+.timeline-item .ver { font-size:15px; font-weight:800; color:#1d1d1f; min-width:70px; }
+.timeline-item .desc { flex:1; font-size:13px; }
+.decision { background:#1d1d1f; color:#fff; padding:16px 20px; border-radius:12px; margin:16px 0; }
+.decision h3 { margin:0 0 10px; color:#fff; }
+.decision p { margin:0; color:#c1c1c3; font-size:14px; }
+.q { display:inline-block; width:24px; height:24px; border-radius:50%; background:#ffd60a; color:#000; font-weight:800; text-align:center; line-height:24px; font-size:13px; margin-right:6px; }
+ul { padding-left:20px; }
+ul li { margin-bottom:6px; font-size:14px; }
+.research-quote { background:#f5f5f7; padding:12px 14px; border-left:3px solid #6e6e73; font-size:13px; color:#3a3a3c; margin:8px 0; border-radius:0 8px 8px 0; font-style:italic; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>📦 FOODIX 実行計画書</h1>
+<p class="sub">クエスト管理ツール → 配達員総合支援プラットフォームへの進化計画</p>
+
+<div class="card emph">
+  <h3 style="margin-top:0">🎯 この計画書の目的</h3>
+  <p style="margin:0;font-size:14px;">Webリサーチと tさんの悩みリストから、<b>FOODIXの本質的な価値</b>を定義し、段階的に実装する道筋を示します。tさんが今日のチャットで決めてほしいポイントを整理しました。</p>
+</div>
+
+<h2>1. ビジョンの再定義</h2>
+
+<div class="grid">
+  <div class="card" style="border-left:4px solid #ef4444">
+    <div class="tag must">Before</div>
+    <h3 style="margin-top:8px">「クエNavi」<br>= クエスト管理ツール</h3>
+    <p style="color:#6e6e73;font-size:13px">・リアルタイムダッシュボード<br>・件数/金額の追跡<br>・自動更新で状況把握</p>
+  </div>
+  <div class="card" style="border-left:4px solid #10b981">
+    <div class="tag done">After</div>
+    <h3 style="margin-top:8px">「[アプリ名]」<br>= 配達員総合支援プラットフォーム</h3>
+    <p style="color:#6e6e73;font-size:13px">・クエスト+ナビ+ログ+店舗DB+新人支援<br>・業務のすべてを一つで<br>・App Store初の「フード配達員専用」</p>
+  </div>
+</div>
+
+<h2>2. アプリ名の決定（<span class="q">!</span>要決定）</h2>
+<p style="font-size:14px;color:#3a3a3c;">FOODIX は「会社名」。アプリ名を別に決める必要あり。5候補：</p>
+
+<div class="grid">
+  <div class="name-opt">
+    <h4>🍱 TobeDeli <span style="font-size:12px;color:#6e6e73;">(トベデリ)</span></h4>
+    <p>「配達で飛べる（稼げる・楽しく）」 / 日本語感・覚えやすい</p>
+  </div>
+  <div class="name-opt">
+    <h4>📦 ハコブくん</h4>
+    <p>「運ぶ」を親しみやすく / ゆるキャラ化・差別化</p>
+  </div>
+  <div class="name-opt">
+    <h4>🎯 DeliMate <span style="font-size:12px;color:#6e6e73;">(デリメイト)</span></h4>
+    <p>「配達の相棒」 / 国際展開OK・プロ感</p>
+  </div>
+  <div class="name-opt">
+    <h4>🚀 デリバリオ / Delivario</h4>
+    <p>マリオ的な親しみ / ゲーム感</p>
+  </div>
+  <div class="name-opt">
+    <h4>✅ クエNavi（継続）</h4>
+    <p>既存ユーザーがいれば維持価値 / 認知済み</p>
+  </div>
+  <div class="name-opt">
+    <h4>⚡ FOODIX Go</h4>
+    <p>会社ブランド+機能名 / 統一感・将来の拡張性</p>
+  </div>
+</div>
+
+<h2>3. 機能優先順位マトリクス</h2>
+<p style="font-size:14px;color:#3a3a3c;">配達員のペインポイント × 実装難易度で整理：</p>
+
+<div class="matrix">
+  <div class="grid-line-v"></div>
+  <div class="grid-line-h"></div>
+  <div class="quad-label" style="top:30px;left:30px">優先度1 / 効くし楽</div>
+  <div class="quad-label" style="top:30px;right:30px">優先度2 / 効くが重い</div>
+  <div class="quad-label" style="bottom:30px;left:30px">優先度3 / 軽いが効果小</div>
+  <div class="quad-label" style="bottom:30px;right:30px">優先度4 / 後回し</div>
+  <div class="axis-x">← 実装カンタン / 難 →</div>
+  <div class="axis-y">← インパクト小 / 大 →</div>
+  
+  <div class="item priority1" style="top:60px;left:60px">クエスト手動登録</div>
+  <div class="item priority1" style="top:90px;left:120px">色・UIリファクタ</div>
+  <div class="item priority1" style="top:50px;left:200px">注意点MAP統合</div>
+  <div class="item priority2" style="top:80px;right:80px">スクショOCR</div>
+  <div class="item priority2" style="top:140px;right:40px">マンション入口DB</div>
+  <div class="item priority2" style="top:200px;right:120px">配達ログ自動記録</div>
+  <div class="item priority3" style="bottom:80px;left:60px">日報コピー</div>
+  <div class="item priority3" style="bottom:120px;left:130px">チップTips表示</div>
+  <div class="item priority4" style="bottom:60px;right:60px">店舗DB (共有)</div>
+  <div class="item priority4" style="bottom:120px;right:150px">新人便利グッズ販売</div>
+</div>
+
+<h2>4. MVP（最小版）の範囲</h2>
+<p style="font-size:14px;color:#3a3a3c;">App Store 初版で<b>これだけは必須</b>：</p>
+
+<div class="card">
+  <h3 style="margin-top:0">MVP v1.0 機能セット</h3>
+  <ul>
+    <li><span class="tag must">必須</span><b>クエスト管理</b>（手動登録+OCR両方）</li>
+    <li><span class="tag must">必須</span><b>デザイン刷新</b>（Slate系、タブ構造、ヘッダー整理）</li>
+    <li><span class="tag must">必須</span><b>クイックカウンター</b>（現行継続、表記改善）</li>
+    <li><span class="tag must">必須</span><b>クイックツール</b>（おつり/置き配/判定/サマリー）</li>
+    <li><span class="tag should">推奨</span><b>履歴タブ</b>（過去のクエスト参照）</li>
+    <li><span class="tag should">推奨</span><b>配達ログ記録</b>（距離・時間を手動+自動）</li>
+    <li><span class="tag nice">後回し</span>注意点MAP統合</li>
+    <li><span class="tag nice">後回し</span>店舗DB / チップTips / 便利グッズ</li>
+  </ul>
+</div>
+
+<h2>5. ロードマップ（時系列）</h2>
+
+<div class="timeline">
+  <div class="timeline-item">
+    <div class="ver">v0.1<br><span style="font-size:10px;color:#6e6e73;font-weight:400;">1週間</span></div>
+    <div class="desc">
+      <b>デザイン刷新</b>（配色・タイポ・ヘッダー整理）<br>
+      <span style="color:#6e6e73;font-size:12px;">ネオン廃止、Slate系へ。タブ構造導入。ライダー名/更新/完了非表示の廃止。</span>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="ver">v0.2<br><span style="font-size:10px;color:#6e6e73;font-weight:400;">+2週間</span></div>
+    <div class="desc">
+      <b>スクショOCR機能</b><br>
+      <span style="color:#6e6e73;font-size:12px;">Capacitor + iOS Vision / Android ML Kit。Uber/出前館/ロケットの画面認識。</span>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="ver">v0.3<br><span style="font-size:10px;color:#6e6e73;font-weight:400;">+2週間</span></div>
+    <div class="desc">
+      <b>履歴・配達ログ</b><br>
+      <span style="color:#6e6e73;font-size:12px;">過去クエストの振り返り、距離・時間の自動計測。</span>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="ver">🚀 v1.0<br><span style="font-size:10px;color:#10b981;font-weight:700;">App Store申請</span></div>
+    <div class="desc">
+      <b>MVP完成・審査申請</b><br>
+      <span style="color:#6e6e73;font-size:12px;">約1〜2ヶ月後。審査24〜48時間。</span>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="ver">v1.1<br><span style="font-size:10px;color:#6e6e73;font-weight:400;">+1ヶ月</span></div>
+    <div class="desc">
+      <b>注意点MAP統合</b><br>
+      <span style="color:#6e6e73;font-size:12px;">既存の tさん作成MAP（API連携済み）を統合。</span>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="ver">v2.0<br><span style="font-size:10px;color:#6e6e73;font-weight:400;">+3ヶ月</span></div>
+    <div class="desc">
+      <b>コミュニティ機能</b><br>
+      <span style="color:#6e6e73;font-size:12px;">ユーザー間での店舗情報共有、マンション入口情報共有。</span>
+    </div>
+  </div>
+</div>
+
+<h2>6. スクショOCR 技術検証 <span class="tag done">可能</span></h2>
+
+<div class="card plan">
+  <h3 style="margin-top:0">✅ 技術的に完全実装可能（確認済）</h3>
+  <ul>
+    <li><b>プラグイン</b>: <code>@capacitor-community/image-to-text</code></li>
+    <li><b>iOS</b>: Apple Vision Framework（無料・高精度・日本語対応）</li>
+    <li><b>Android</b>: Google ML Kit（無料・高精度・日本語対応）</li>
+    <li><b>オフライン動作</b>: サーバー不要、プライバシー保護</li>
+    <li><b>処理時間</b>: 1〜2秒/画像</li>
+  </ul>
+  <h3>想定される流れ</h3>
+  <ol>
+    <li>ユーザーがUber/出前館アプリでクエスト画面を見る</li>
+    <li>スクショを撮る（iOSの電源+音量ボタン）</li>
+    <li>FOODIXを開く → 「📷 スクショから取込」ボタン</li>
+    <li>最新スクショが自動選択 / 写真ライブラリから選ぶ</li>
+    <li>OCRで金額・件数・時間帯を抽出 → 確認画面 → 登録</li>
+  </ol>
+</div>
+
+<h2>7. 業界調査の主要発見</h2>
+
+<h3>🏆 競合まとめ</h3>
+<table>
+  <thead><tr><th>アプリ</th><th>強み</th><th>弱み</th><th>FOODIX差別化</th></tr></thead>
+  <tbody>
+    <tr><td>配達員お助け<br>コンパニオン</td><td>音声通知、2台持ち連携</td><td>Android only、Uber only</td><td>iOS対応、多サービス</td></tr>
+    <tr><td>GODOOR<br>(ゼンリン)</td><td>住宅地図、伝票OCR</td><td>フード非対応、法人向け</td><td>フード特化、クエスト管理</td></tr>
+    <tr><td>配達員日記</td><td>多サービス、日報</td><td>ナビ系なし</td><td>ナビ+注意点統合</td></tr>
+  </tbody>
+</table>
+
+<h3>💬 配達員の生の声（Web調査より）</h3>
+<div class="research-quote">「ピンズレはUVERでは日常茶飯事。対策は皆自力で考えてる」</div>
+<div class="research-quote">「Googleマップは信用するな。踏切・信号回避の裏ルート構築が必須」</div>
+<div class="research-quote">「タワマン入口で迷う、防災センター経由マンションも」</div>
+<div class="research-quote">「ピック店の注意事項、メモしてても忘れる」</div>
+<div class="research-quote">「梱包が甘い店は汁漏れで配達員が責められる」</div>
+
+<p style="font-size:14px;color:#3a3a3c;margin-top:16px;">→ これら全部、現状の市場で<b>専用アプリが解決していない</b>領域。</p>
+
+<h2>8. tさんに決めてほしいこと</h2>
+
+<div class="decision">
+  <h3>🗳 決定事項① アプリ名</h3>
+  <p>上記6候補から1つ選ぶ（または完全に別案）</p>
+</div>
+
+<div class="decision">
+  <h3>🗳 決定事項② 次に実装する機能（1つ選択）</h3>
+  <p>A) デザイン刷新から着手（見た目激変、既存機能そのまま）<br>
+     B) スクショOCRから着手（目新しい機能追加）<br>
+     C) 両方並行（時間かかる）</p>
+</div>
+
+<div class="decision">
+  <h3>🗳 決定事項③ MVPに含めるか判断</h3>
+  <p>A) 注意点MAP統合 → v1.0に入れる or v1.1以降<br>
+     B) 配達ログ自動記録 → v1.0に入れる or v1.1以降<br>
+     C) 履歴タブ → v1.0に入れる or v1.1以降</p>
+</div>
+
+<div class="decision">
+  <h3>🗳 決定事項④ ストア戦略</h3>
+  <p>A) iOS先行、Androidは後 / B) 両方同時 / C) Android先行（審査が緩い）</p>
+</div>
+
+<div style="margin-top:40px;padding:24px;background:#1d1d1f;color:#fff;border-radius:16px;">
+  <div style="font-size:12px;color:#86868b;margin-bottom:12px;letter-spacing:.1em;">SUMMARY</div>
+  <div style="font-size:16px;line-height:1.8;">
+    今日の調査で、FOODIXが狙える市場は<b>誰も手をつけていない青い海</b>であることが確認できました。<br><br>
+    <b>クエスト管理 + 住宅ナビ + 店舗情報 + 配達ログ</b>を統合するアプリは、日本の配達員向け市場に<b>まだ存在しません</b>。tさんの注意点MAP・クイックカウンターという<b>独自資産</b>を軸に、業界初のポジションを取れる可能性があります。<br><br>
+    次のチャットで上記4つの決定ができれば、<b>1ヶ月以内にApp Store申請</b>まで進められます。
+  </div>
+</div>
+
+</div>
+</body>
+</html>
