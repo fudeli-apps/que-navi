@@ -270,7 +270,7 @@ function EndBadge({ endTime, startTime }) {
     const d = Math.floor(minToStart / 1440);
     const h = Math.floor((minToStart % 1440) / 60);
     const m = minToStart % 60;
-    const label = d >= 1 ? `${d}日${h}h後` : h >= 1 ? `${h}h${m}m後` : `${m}分後`;
+    const label = d >= 1 ? `${d}日${h}h` : h >= 1 ? `${h}h${m}m` : `${m}分`;
     return (
       <div style={{textAlign:"center",background:"#0a0f1a",border:"1px solid #1e293b",
         borderRadius:8,padding:"8px 6px",minWidth:0}}>
@@ -481,12 +481,13 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx
           {me===q.owner && !achieved && (
             <><button onClick={() => onEdit && onEdit(q)} style={{background:"none",border:"none",color:"#64748b",fontSize:18,cursor:"pointer",padding:"2px 4px"}} style={{fontSize:17,fontWeight:700}}>編集</button><button onClick={() => onCopy && onCopy(q)} style={{background:"none",border:"none",color:"#64748b",fontSize:18,cursor:"pointer",padding:"2px 4px"}} style={{fontSize:17,fontWeight:700}}>コピー</button></>
           )}
-          {me===q.owner && (
-            <button onClick={() => onDelete(q.id)} style={{
-              background:"none",border:"none",color:"#475569",
-              fontSize:17,cursor:"pointer",padding:"0 4px",
-            }}>✕</button>
-          )}
+          <button onClick={() => {
+            if(!confirm("削除しますか？")) return;
+            onDelete(q.id);
+          }} style={{
+            background:"none",border:"none",color:"#475569",
+            fontSize:17,cursor:"pointer",padding:"0 4px",
+          }}>✕</button>
         </div>
       </div>
 
@@ -574,7 +575,7 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx
         </div>
 
         {/* 終了まで */}
-        <div style={{flexShrink:0,width:76}}>
+        <div style={{flexShrink:0,width:84}}>
           <EndBadge endTime={q.endTime} startTime={q.startTime}/>
         </div>
       </div>
@@ -1451,7 +1452,6 @@ function App() {
   };
 
   const handleDelete = async (id) => {
-    if(!confirm("削除しますか？")) return;
     const updated = quests.filter(q => q.id !== id);
     try { await saveQ(updated); } catch(e) { console.error(e); }
     setQuests(updated); setLastUp(new Date());
