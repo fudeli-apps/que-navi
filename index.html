@@ -14,31 +14,13 @@
   <title>クエNavi</title>  
   <!-- cb-prev:1776368906389 cache-bust: 1776366012405 -->
   <style>
-    :root {
-      --qn-bg: #080c14;
-      --qn-card: #121826;
-      --qn-card-inner: #060a10;
-      --qn-border: #1f2838;
-      --qn-border-strong: #2b3549;
-      --qn-surface: #0f1525;
-      --qn-text: #f1f5f9;
-      --qn-muted: #94a3b8;
-      --qn-subtle: #64748b;
-      --qn-blue: #3b82f6;
-      --qn-green: #22c55e;
-      --qn-red: #ef4444;
-      --qn-amber: #fb923c;
-    }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    body { margin: 0; padding: 0; background: var(--qn-bg); font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; }
+    body { margin: 0; padding: 0; background: #080c14; font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; }
     input[type="date"], input[type="time"] { -webkit-appearance: none; appearance: none; }
     input[type="number"] { -moz-appearance: textfield; }
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     ::-webkit-scrollbar { display: none; }
-    button { transition: transform .08s ease, opacity .08s ease, background-color .15s ease; }
-    button:active:not(:disabled) { transform: scale(0.96); opacity: 0.85; }
-    .qn-menu-item:active:not(:disabled) { background: rgba(255,255,255,0.06); }
   @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}</style>
 
   <style id="polish-styles">
@@ -424,80 +406,6 @@ function RewardPanel({ q }) {
 }
 
 /* ══════════════════════════════════════
-   クエスト状態ラベル
-══════════════════════════════════════ */
-function getQuestStatusLabel(q) {
-  const done = q.done || 0;
-  const goal = q.goal || 1;
-  if (done >= goal) return { text: "達成", color: "#22c55e" };
-  const minToStart = remMin(q.startTime);
-  const minToEnd = remMin(q.endTime);
-  if (q.startTime && minToStart > 0) return { text: "開始前", color: "#64748b" };
-  if (minToEnd < 0) return { text: "終了", color: "#ef4444" };
-  if (minToEnd <= 30) return { text: "終了間近", color: "#fb923c" };
-  return { text: "進行中", color: "#3b82f6" };
-}
-
-/* ══════════════════════════════════════
-   MoreVertical メニュー (並び替え/削除)
-══════════════════════════════════════ */
-function MoreVerticalMenu({ onMoveUp, onMoveDown, onDelete, canMoveUp, canMoveDown }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
-  useEffect(() => {
-    if (!open) return;
-    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
-    document.addEventListener("click", handler);
-    return () => document.removeEventListener("click", handler);
-  }, [open]);
-  const itemStyle = {
-    background:"none", border:"none", width:"100%", textAlign:"left",
-    padding:"10px 14px", fontSize:14, cursor:"pointer",
-    display:"flex", alignItems:"center", gap:10, fontFamily:"inherit",
-  };
-  return (
-    <div ref={ref} style={{position:"relative"}}>
-      <button aria-label="メニューを開く" aria-haspopup="menu" aria-expanded={open}
-        onClick={(e)=>{e.stopPropagation(); setOpen(v=>!v);}}
-        style={{background:"none",border:"none",color:"#94a3b8",
-          fontSize:20,cursor:"pointer",padding:"4px 8px",lineHeight:1,
-          borderRadius:6,fontWeight:700}}>⋮</button>
-      {open && (
-        <div role="menu" style={{
-          position:"absolute", top:"100%", right:0, marginTop:6,
-          background:"var(--qn-surface)", border:"1px solid var(--qn-border-strong)",
-          borderRadius:10, boxShadow:"0 10px 30px rgba(0,0,0,0.55)",
-          minWidth:156, zIndex:100, overflow:"hidden",
-        }}>
-          <button role="menuitem" aria-label="上に移動" disabled={!canMoveUp} className="qn-menu-item"
-            onClick={()=>{setOpen(false); onMoveUp();}}
-            style={{...itemStyle, color: canMoveUp?"#e7ecf3":"#475569",
-              cursor: canMoveUp?"pointer":"default"}}>
-            <span aria-hidden="true" style={{width:14,textAlign:"center"}}>▲</span>上へ移動
-          </button>
-          <button role="menuitem" aria-label="下に移動" disabled={!canMoveDown} className="qn-menu-item"
-            onClick={()=>{setOpen(false); onMoveDown();}}
-            style={{...itemStyle, color: canMoveDown?"#e7ecf3":"#475569",
-              cursor: canMoveDown?"pointer":"default"}}>
-            <span aria-hidden="true" style={{width:14,textAlign:"center"}}>▼</span>下へ移動
-          </button>
-          <div style={{height:1,background:"var(--qn-border-strong)"}} role="separator"/>
-          <button role="menuitem" aria-label="削除" className="qn-menu-item"
-            onClick={()=>{
-              setOpen(false);
-              if(!confirm("削除しますか？")) return;
-              onDelete();
-            }}
-            style={{...itemStyle, color:"#ef4444"}}>
-            <span aria-hidden="true" style={{width:14,textAlign:"center"}}>✕</span>削除
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ══════════════════════════════════════
    クエストカード
 ══════════════════════════════════════ */
 function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx, questCount }) {
@@ -560,34 +468,26 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx
           }}>{q.owner}</span>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:4,flexShrink:0}}>
-          {(() => {
-            const st = getQuestStatusLabel(q);
-            return (
-              <span aria-label={"ステータス: " + st.text} style={{
-                background: st.color + "1a", color: st.color,
-                border: "1px solid " + st.color + "66",
-                borderRadius: 6, padding: "2px 8px",
-                fontSize: 11, fontWeight: 700, whiteSpace: "nowrap",
-              }}>{st.text}</span>
-            );
-          })()}
-          {!achieved && (
-            <>
-              <button aria-label="クエストを編集"
-                onClick={() => onEdit && onEdit(q)}
-                style={{background:"none",border:"none",color:"#94a3b8",fontSize:13,fontWeight:700,cursor:"pointer",padding:"4px 8px",borderRadius:6}}>編集</button>
-              <button aria-label="クエストをコピーして新規作成"
-                onClick={() => onCopy && onCopy(q)}
-                style={{background:"none",border:"none",color:"#94a3b8",fontSize:13,fontWeight:700,cursor:"pointer",padding:"4px 8px",borderRadius:6}}>コピー</button>
-            </>
+          {achieved && (
+            <span style={{fontSize:17,fontWeight:800,color:"#22c55e",
+              textShadow:"0 0 10px #22c55e"}}>✓ 達成！</span>
           )}
-          <MoreVerticalMenu
-            onMoveUp={() => onMove && onMove(q.id, -1)}
-            onMoveDown={() => onMove && onMove(q.id, 1)}
-            onDelete={() => onDelete(q.id)}
-            canMoveUp={questIdx != null && questIdx > 0}
-            canMoveDown={questIdx != null && questIdx < questCount - 1}
-          />
+          <div style={{display:"flex",flexDirection:"column",gap:2,marginLeft:2}}>
+            <button onClick={()=>onMove&&onMove(q.id,-1)} disabled={questIdx==null||questIdx===0}
+              style={{background:"none",border:"none",color:(questIdx==null||questIdx===0)?"#1e293b":"#94a3b8",fontSize:18,cursor:(questIdx==null||questIdx===0)?"default":"pointer",padding:"2px 4px",lineHeight:1}}>▲</button>
+            <button onClick={()=>onMove&&onMove(q.id,1)} disabled={questIdx==null||questIdx===questCount-1}
+              style={{background:"none",border:"none",color:(questIdx==null||questIdx===questCount-1)?"#1e293b":"#94a3b8",fontSize:18,cursor:(questIdx==null||questIdx===questCount-1)?"default":"pointer",padding:"2px 4px",lineHeight:1}}>▼</button>
+          </div>
+          {me===q.owner && !achieved && (
+            <><button onClick={() => onEdit && onEdit(q)} style={{background:"none",border:"none",color:"#64748b",fontSize:18,cursor:"pointer",padding:"2px 4px"}} style={{fontSize:17,fontWeight:700}}>編集</button><button onClick={() => onCopy && onCopy(q)} style={{background:"none",border:"none",color:"#64748b",fontSize:18,cursor:"pointer",padding:"2px 4px"}} style={{fontSize:17,fontWeight:700}}>コピー</button></>
+          )}
+          <button onClick={() => {
+            if(!confirm("削除しますか？")) return;
+            onDelete(q.id);
+          }} style={{
+            background:"none",border:"none",color:"#475569",
+            fontSize:17,cursor:"pointer",padding:"0 4px",
+          }}>✕</button>
         </div>
       </div>
 
@@ -648,8 +548,6 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx
         {/* ＋ / － ボタン */}
         <div style={{flex:1,display:"flex",flexDirection:"column",gap:8,alignItems:"center"}}>
           <button
-            aria-label="配達完了を1件追加"
-            disabled={achieved}
             onClick={() => !achieved && onUpdate(q.id,"done",1)}
             style={{
               width: "100%", maxWidth: 110, height: 54,
@@ -666,7 +564,6 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx
             }}
           >＋</button>
           <button
-            aria-label="配達完了を1件減らす"
             onClick={() => onUpdate(q.id,"done",-1)}
             style={{
               width: 56, height: 32, borderRadius: 8, border: "none",
@@ -706,17 +603,17 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx
             {/* 拒否カウンター */}
             <div style={{display:"flex",alignItems:"center",gax:8}}>
               <span style={{fontSize:17,color:MUTED,flexShrink:0}}>拒否件数</span>
-              <button aria-label="拒否件数を1件減らす" onClick={() => onUpdate(q.id,"rejected",-1)} style={{
+              <button onClick={() => onUpdate(q.id,"rejected",-1)} style={{
                 background:"#1e293b",border:"none",color:MUTED,
                 borderRadius:6,width:28,height:28,fontSize:17,cursor:"pointer",
                 display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,
               }}>－</button>
-              <span aria-live="polite" style={{
+              <span style={{
                 fontSize:18,fontWeight:800,color:"#fb923c",
                 minWidth:24,textAlign:"center",
                 textShadow:"0 0 10px #fb923c70",
               }}>{rejected}</span>
-              <button aria-label="拒否件数を1件追加" onClick={() => onUpdate(q.id,"rejected",1)} style={{
+              <button onClick={() => onUpdate(q.id,"rejected",1)} style={{
                 background:"#7c2d12",border:"none",color:"#fb923c",
                 borderRadius:6,width:28,height:28,fontSize:17,cursor:"pointer",
                 display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,
@@ -757,29 +654,6 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx
           <RewardPanel q={q}/>
         </div>
       )}
-
-      {/* ─ 3カウンター: 受注/完了/拒否 ─ */}
-      <div role="group" aria-label="受注統計"
-        style={{
-          padding:"8px 14px",
-          display:"flex",justifyContent:"space-around",alignItems:"center",
-          background:"#0a0f1a",borderTop:`1px solid ${BDR}`,gap:8,
-        }}>
-        <div aria-label={`受注 ${done + rejected}件`} style={{textAlign:"center",flex:1,minWidth:0}}>
-          <div style={{fontSize:10,color:MUTED,letterSpacing:"0.08em",fontWeight:600}}>受注</div>
-          <div style={{fontSize:16,fontWeight:800,color:"#e7ecf3",marginTop:2}}>{done + rejected}</div>
-        </div>
-        <div style={{width:1,height:22,background:BDR}} aria-hidden="true"/>
-        <div aria-label={`完了 ${done}件`} style={{textAlign:"center",flex:1,minWidth:0}}>
-          <div style={{fontSize:10,color:MUTED,letterSpacing:"0.08em",fontWeight:600}}>完了</div>
-          <div style={{fontSize:16,fontWeight:800,color:"#22c55e",marginTop:2}}>{done}</div>
-        </div>
-        <div style={{width:1,height:22,background:BDR}} aria-hidden="true"/>
-        <div aria-label={`拒否 ${rejected}件`} style={{textAlign:"center",flex:1,minWidth:0}}>
-          <div style={{fontSize:10,color:MUTED,letterSpacing:"0.08em",fontWeight:600}}>拒否</div>
-          <div style={{fontSize:16,fontWeight:800,color:"#fb923c",marginTop:2}}>{rejected}</div>
-        </div>
-      </div>
 
       {/* ─ フッター ─ */}
       <div style={{
@@ -1908,8 +1782,8 @@ function App() {
       ) : (
         <div style={{padding:"10px 12px",display:"flex",flexDirection:"column",gap:10}}>
           <div style={{display:'flex',borderBottom:'1px solid #1f2838',marginBottom:10}}>
-          <button aria-label="稼働中タブ" role="tab" aria-selected={activeTab==='active'} onClick={()=>setActiveTab('active')} style={{flex:1,padding:'10px 0',background:'transparent',border:'none',color:activeTab==='active'?'#fff':'#94a3b8',borderBottom:activeTab==='active'?'2px solid #3b82f6':'2px solid transparent',fontSize:14,fontWeight:600,cursor:'pointer'}}>稼働中 ({quests.filter(q=>(q.done||0)<q.goal).length})</button>
-          <button aria-label="履歴タブ" role="tab" aria-selected={activeTab==='history'} onClick={()=>setActiveTab('history')} style={{flex:1,padding:'10px 0',background:'transparent',border:'none',color:activeTab==='history'?'#fff':'#94a3b8',borderBottom:activeTab==='history'?'2px solid #3b82f6':'2px solid transparent',fontSize:14,fontWeight:600,cursor:'pointer'}}>履歴 ({quests.filter(q=>(q.done||0)>=q.goal).length})</button><button aria-label="集計タブ" role="tab" aria-selected={activeTab==='summary'} onClick={()=>setActiveTab('summary')} style={{flex:1,padding:'10px 0',background:'transparent',border:'none',color:activeTab==='summary'?'#fff':'#94a3b8',borderBottom:activeTab==='summary'?'2px solid #3b82f6':'2px solid transparent',fontSize:14,fontWeight:600,cursor:'pointer'}}>集計 ({quests.length})</button>
+          <button onClick={()=>setActiveTab('active')} style={{flex:1,padding:'10px 0',background:'transparent',border:'none',color:activeTab==='active'?'#fff':'#94a3b8',borderBottom:activeTab==='active'?'2px solid #3b82f6':'2px solid transparent',fontSize:14,fontWeight:600,cursor:'pointer'}}>稼働中 ({quests.filter(q=>(q.done||0)<q.goal).length})</button>
+          <button onClick={()=>setActiveTab('history')} style={{flex:1,padding:'10px 0',background:'transparent',border:'none',color:activeTab==='history'?'#fff':'#94a3b8',borderBottom:activeTab==='history'?'2px solid #3b82f6':'2px solid transparent',fontSize:14,fontWeight:600,cursor:'pointer'}}>履歴 ({quests.filter(q=>(q.done||0)>=q.goal).length})</button><button onClick={()=>setActiveTab('summary')} style={{flex:1,padding:'10px 0',background:'transparent',border:'none',color:activeTab==='summary'?'#fff':'#94a3b8',borderBottom:activeTab==='summary'?'2px solid #3b82f6':'2px solid transparent',fontSize:14,fontWeight:600,cursor:'pointer'}}>集計 ({quests.length})</button>
         </div>
         {activeTab!=='summary'&&quests.filter(q=>activeTab==='history'?(q.done||0)>=q.goal:(q.done||0)<q.goal).length===0&&(
           <div style={{textAlign:'center',padding:'60px 16px',color:'#64748b'}}>
